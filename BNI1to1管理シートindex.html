@@ -1,0 +1,2311 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BNI TRES STELLAS 1to1管理システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            height: calc(100vh - 200px);
+        }
+        
+        .sidebar {
+            background: #f8f9fa;
+            padding: 30px;
+            border-right: 1px solid #e9ecef;
+            overflow-y: auto;
+        }
+        
+        .search-section {
+            margin-bottom: 20px;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .search-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .search-tab {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 15px;
+            background: #e9ecef;
+            color: #495057;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-tab.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .filter-section {
+            margin-bottom: 20px;
+        }
+        
+        .filter-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .filter-btn {
+            padding: 6px 12px;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .management-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f1f3f4;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .management-btn {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 8px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+        
+        .management-btn:hover {
+            background: #2980b9;
+        }
+        
+        .management-btn.delete {
+            background: #e74c3c;
+        }
+        
+        .management-btn.delete:hover {
+            background: #c0392b;
+        }
+        
+        .add-form {
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .add-form.show {
+            display: block;
+        }
+        
+        .form-input-small {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .form-buttons {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .btn-save {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .file-upload {
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .file-upload.show {
+            display: block;
+        }
+        
+        .file-area {
+            border: 2px dashed #ddd;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        
+        .file-area:hover {
+            border-color: #3498db;
+        }
+        
+        .delete-form {
+            margin-top: 15px;
+            display: none;
+            background: #fff5f5;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #fed7d7;
+        }
+        
+        .delete-form.show {
+            display: block;
+        }
+        
+        .delete-warning {
+            color: #e53e3e;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .member-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+        }
+        
+        .member-item {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .member-item:hover {
+            background: #e3f2fd;
+        }
+        
+        .member-item.selected {
+            background: #3498db;
+            color: white;
+        }
+        
+        .member-item.completed {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        
+        .member-info {
+            flex: 1;
+            pointer-events: none;
+        }
+        
+        .member-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .member-category {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 3px;
+        }
+        
+        .member-id {
+            font-size: 0.8em;
+            color: #999;
+        }
+        
+        .member-actions {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e9ecef;
+        }
+        
+        .status-indicator.completed {
+            background: #28a745;
+        }
+        
+        .status-indicator.scheduled {
+            background: #ffc107;
+        }
+        
+        .delete-member-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 12px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            margin-left: 8px;
+        }
+        
+        .delete-member-btn:hover {
+            background: #c0392b;
+            transform: scale(1.1);
+        }
+        
+        .delete-mode .delete-member-btn {
+            display: flex;
+        }
+        
+        .bulk-delete-mode .member-checkbox {
+            display: block;
+        }
+        
+        .member-checkbox {
+            display: none;
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        
+        .detail-panel {
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        .welcome-message {
+            text-align: center;
+            color: #666;
+            font-size: 1.2em;
+            margin-top: 100px;
+        }
+        
+        .member-detail {
+            display: none;
+        }
+        
+        .member-detail.active {
+            display: block;
+        }
+        
+        .detail-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .detail-name {
+            font-size: 2em;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+        
+        .detail-category {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .delete-current-member-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .delete-current-member-btn:hover {
+            background: #c0392b;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .form-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .quick-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            background: #e9ecef;
+            color: #495057;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-btn:hover {
+            background: #3498db;
+            color: white;
+        }
+        
+        .save-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+        
+        .progress-bar {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #28a745, #20c997);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .export-section {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #e3f2fd;
+            border-radius: 10px;
+        }
+        
+        .export-btn {
+            background: linear-gradient(135deg, #2196f3 0%, #21cbf3 100%);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 20px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(33, 150, 243, 0.3);
+        }
+        
+        /* 画像関連のスタイル */
+        .image-upload-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .image-slot {
+            position: relative;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            min-height: 150px;
+        }
+        
+        .image-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            cursor: pointer;
+            height: 150px;
+            transition: all 0.3s ease;
+        }
+        
+        .image-placeholder:hover {
+            background: #f8f9fa;
+            border-color: #3498db;
+        }
+        
+        .upload-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+        
+        .uploaded-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+        
+        .image-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: space-around;
+            padding: 5px;
+        }
+        
+        .image-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 3px;
+            transition: background 0.3s ease;
+        }
+        
+        .image-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .image-info {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+        
+        /* 画像モーダル */
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            cursor: pointer;
+        }
+        
+        .image-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+        }
+
+        /* マッチング機能のスタイル */
+        .matching-placeholder {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px dashed #ddd;
+        }
+        
+        .matching-results {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .matching-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .matching-card:hover {
+            border-color: #3498db;
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .matching-card.high-match {
+            border-color: #28a745;
+            background: #f8fff9;
+        }
+        
+        .matching-card.medium-match {
+            border-color: #ffc107;
+            background: #fffef8;
+        }
+        
+        .matching-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .matching-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+        
+        .matching-score {
+            background: #3498db;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        .matching-score.high {
+            background: #28a745;
+        }
+        
+        .matching-score.medium {
+            background: #ffc107;
+            color: #000;
+        }
+        
+        .matching-category {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+        
+        .matching-reason {
+            background: #e3f2fd;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            color: #1565c0;
+            margin-bottom: 8px;
+        }
+        
+        .matching-reason.wants {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        
+        .matching-reason.offers {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+        
+        .matching-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 5px;
+        }
+        
+        .matching-keyword {
+            background: #f1f3f4;
+            color: #495057;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 0.75em;
+        }
+        
+        .matching-keyword.highlight {
+            background: #3498db;
+            color: white;
+        }
+        
+        .no-matches {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .sidebar {
+                padding: 20px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .image-upload-area {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤝 BNI TRES STELLAS 1to1管理システム</h1>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalMembers">20</div>
+                    <div class="stat-label">総メンバー</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completedCount">0</div>
+                    <div class="stat-label">完了済み</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="scheduledCount">0</div>
+                    <div class="stat-label">予定済み</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="progressPercent">0%</div>
+                    <div class="stat-label">進捗率</div>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="search-section">
+                    <div class="search-tabs">
+                        <button class="search-tab active" id="basicSearch">基本検索</button>
+                        <button class="search-tab" id="wantsSearch">紹介してほしい</button>
+                        <button class="search-tab" id="offersSearch">紹介できる</button>
+                    </div>
+                    
+                    <input type="text" id="searchBox" class="search-box" placeholder="🔍 メンバー検索...">
+                </div>
+                
+                <div class="filter-section">
+                    <div class="filter-title">ステータス</div>
+                    <div class="filter-group">
+                        <button class="filter-btn active" id="filterAll">全て</button>
+                        <button class="filter-btn" id="filterPending">未実施</button>
+                        <button class="filter-btn" id="filterCompleted">完了済み</button>
+                        <button class="filter-btn" id="filterScheduled">予定済み</button>
+                    </div>
+                </div>
+                
+                <div class="management-section">
+                    <div class="filter-title">👥 メンバー管理</div>
+                    
+                    <button class="management-btn" id="showAddBtn">➕ 新規追加</button>
+                    <button class="management-btn" id="showFileBtn">📁 ファイル取込</button>
+                    <button class="management-btn delete" id="showDeleteBtn">🗑️ メンバー削除</button>
+                    <button class="management-btn delete" id="showBulkDeleteBtn">☑️ 複数選択削除</button>
+                    
+                    <!-- 新規追加フォーム -->
+                    <div class="add-form" id="addForm">
+                        <input type="text" id="newId" class="form-input-small" placeholder="ID (例: A100)">
+                        <input type="text" id="newName" class="form-input-small" placeholder="名前">
+                        <input type="text" id="newYomigana" class="form-input-small" placeholder="よみがな">
+                        <input type="text" id="newCategory" class="form-input-small" placeholder="カテゴリー">
+                        <input type="text" id="newRole" class="form-input-small" placeholder="役職" value="メンバー">
+                        <div class="form-buttons">
+                            <button class="btn-save" id="saveNewMember">追加</button>
+                            <button class="btn-cancel" id="cancelAdd">キャンセル</button>
+                        </div>
+                    </div>
+                    
+                    <!-- ファイルアップロード -->
+                    <div class="file-upload" id="fileUpload">
+                        <div class="file-area" id="fileArea">
+                            <input type="file" id="fileInput" accept=".xlsx,.csv" style="display: none;">
+                            📁 ファイル選択<br>
+                            <small>Excel/CSV対応</small>
+                        </div>
+                        <div id="fileStatus"></div>
+                        <button class="btn-cancel" id="cancelFile">キャンセル</button>
+                    </div>
+                    
+                    <!-- 削除フォーム -->
+                    <div class="delete-form" id="deleteForm">
+                        <div class="delete-warning">⚠️ 削除モードが有効です</div>
+                        <p style="font-size: 13px; margin-bottom: 10px;">削除したいメンバーの🗑️ボタンをクリックしてください。<br>削除すると1to1データも一緒に削除されます。</p>
+                        <button class="btn-cancel" id="cancelDelete">削除モード終了</button>
+                    </div>
+                    
+                    <!-- 複数選択削除フォーム -->
+                    <div class="delete-form" id="bulkDeleteForm">
+                        <div class="delete-warning">☑️ 複数選択削除モードです</div>
+                        <p style="font-size: 13px; margin-bottom: 10px;">削除したいメンバーにチェックを入れてください。</p>
+                        <div style="margin: 10px 0;">
+                            <button class="btn-save" id="selectAllBtn" style="background: #17a2b8; margin-right: 5px;">全選択</button>
+                            <button class="btn-save" id="deselectAllBtn" style="background: #6c757d;">全解除</button>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <span id="selectedCount">0</span>件選択中
+                        </div>
+                        <div class="form-buttons">
+                            <button class="btn-save" id="executeDelete" style="background: #dc3545;">選択したメンバーを削除</button>
+                            <button class="btn-cancel" id="cancelBulkDelete">キャンセル</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="member-list" id="memberList">
+                    <!-- メンバーリストがここに生成されます -->
+                </div>
+            </div>
+
+            <div class="detail-panel">
+                <div class="welcome-message" id="welcomeMessage">
+                    👈 左のリストからメンバーを選択してください
+                </div>
+                
+                <div class="member-detail" id="memberDetail">
+                    <div class="detail-header">
+                        <button class="back-btn" id="backToList" title="メンバーリストに戻る">
+                            ← 戻る
+                        </button>
+                        <button class="delete-current-member-btn" id="deleteCurrentMember" title="このメンバーを削除">
+                            🗑️ 削除
+                        </button>
+                        <div class="detail-name" id="detailName"></div>
+                        <div class="detail-category" id="detailCategory"></div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <div class="form-title">📅 1to1基本情報</div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">実施日</label>
+                                <input type="date" class="form-input" id="meetingDate">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">ステータス</label>
+                                <select class="form-select" id="statusSelect">
+                                    <option value="pending">未実施</option>
+                                    <option value="scheduled">予定済み</option>
+                                    <option value="completed">完了済み</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">場所・方法</label>
+                            <div class="quick-buttons">
+                                <button class="quick-btn" onclick="setLocation('オフィス')">オフィス</button>
+                                <button class="quick-btn" onclick="setLocation('カフェ')">カフェ</button>
+                                <button class="quick-btn" onclick="setLocation('オンライン')">オンライン</button>
+                                <button class="quick-btn" onclick="setLocation('電話')">電話</button>
+                            </div>
+                            <input type="text" class="form-input" id="location" placeholder="実施場所・方法">
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <div class="form-title">💼 ビジネス情報</div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">詳しい事業内容</label>
+                            <textarea class="form-textarea" id="businessDetail" placeholder="より詳しい事業内容、特徴、強みなど"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">🎯 理想的な紹介先（このメンバーが求めている人）</label>
+                            <textarea class="form-textarea" id="idealClient" placeholder="どんな方を紹介してほしいか、ターゲット顧客など"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">🤝 あなたができる紹介（このメンバーに紹介できそうな人・案件）</label>
+                            <textarea class="form-textarea" id="canIntroduce" placeholder="このメンバーに紹介できそうな人・案件"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <div class="form-title">🎯 アクション・フォローアップ</div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">約束したこと・次のアクション</label>
+                            <textarea class="form-textarea" id="nextActions" placeholder="約束したこと、次回までにやること、紹介予定など"></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">次回フォローアップ日</label>
+                                <input type="date" class="form-input" id="followupDate">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">優先度</label>
+                                <select class="form-select" id="priority">
+                                    <option value="normal">通常</option>
+                                    <option value="high">高</option>
+                                    <option value="urgent">緊急</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <div class="form-title">📝 その他メモ</div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">自由メモ</label>
+                            <textarea class="form-textarea" id="freeNote" placeholder="印象、個人的な情報、覚えておきたいことなど"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section" id="matchingSection">
+                        <div class="form-title">💡 マッチング候補</div>
+                        <div id="matchingResults">
+                            <div class="matching-placeholder">
+                                データを入力するとマッチング候補が表示されます
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <div class="form-title">📷 添付画像（最大2枚）</div>
+                        
+                        <div class="image-upload-area">
+                            <div class="image-slot" id="imageSlot1">
+                                <div class="image-placeholder" onclick="selectImage(1)">
+                                    <div class="upload-icon">📷</div>
+                                    <p>画像1をアップロード<br><small>クリックして選択</small></p>
+                                </div>
+                                <img class="uploaded-image" id="image1Preview" style="display: none;" onclick="viewImage(1)">
+                                <div class="image-controls" id="image1Controls" style="display: none;">
+                                    <button class="image-btn delete-image-btn" onclick="removeImage(1)">🗑️ 削除</button>
+                                    <button class="image-btn view-image-btn" onclick="viewImage(1)">🔍 拡大</button>
+                                </div>
+                            </div>
+                            
+                            <div class="image-slot" id="imageSlot2">
+                                <div class="image-placeholder" onclick="selectImage(2)">
+                                    <div class="upload-icon">📷</div>
+                                    <p>画像2をアップロード<br><small>クリックして選択</small></p>
+                                </div>
+                                <img class="uploaded-image" id="image2Preview" style="display: none;" onclick="viewImage(2)">
+                                <div class="image-controls" id="image2Controls" style="display: none;">
+                                    <button class="image-btn delete-image-btn" onclick="removeImage(2)">🗑️ 削除</button>
+                                    <button class="image-btn view-image-btn" onclick="viewImage(2)">🔍 拡大</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="image-info">
+                            <small>💡 対応形式: JPG, PNG, GIF, PDF（最大5MB/枚）<br>
+                            Zoomスクリーンショット、資料のPDFなど自由に添付できます</small>
+                        </div>
+                        
+                        <!-- 隠しファイル入力 -->
+                        <input type="file" id="imageInput1" accept="image/*,.pdf" style="display: none;" onchange="handleImageUpload(1, event)">
+                        <input type="file" id="imageInput2" accept="image/*,.pdf" style="display: none;" onchange="handleImageUpload(2, event)">
+                    </div>
+                    
+                    <button class="save-btn" id="saveBtn">💾 保存する</button>
+                </div>
+                
+                <div class="export-section">
+                    <h3>📊 データ管理</h3>
+                    <p>1to1の記録とメンバーデータの管理</p>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <h4 style="margin-bottom: 10px;">💾 データバックアップ・同期</h4>
+                        <button class="export-btn" id="exportAllData">📦 全データ出力</button>
+                        <button class="export-btn" id="importAllData">📥 全データ取込</button>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <h4 style="margin-bottom: 10px;">📈 レポート出力</h4>
+                        <button class="export-btn" id="exportExcel">📈 Excel出力</button>
+                        <button class="export-btn" id="exportSchedule">📅 予定リスト出力</button>
+                    </div>
+                    
+                    <div class="sync-info" style="background: #fff3cd; padding: 10px; border-radius: 8px; border-left: 4px solid #ffc107; margin-top: 15px;">
+                        <small><strong>💡 複数PC使用時のコツ:</strong><br>
+                        1. 作業終了時に「📦 全データ出力」でバックアップ<br>
+                        2. 他のPCで「📥 全データ取込」で同期<br>
+                        3. 定期的にバックアップを保存しておくと安心</small>
+                    </div>
+                    
+                    <!-- データ取込用の隠しフィールド -->
+                    <input type="file" id="dataImportInput" accept=".json" style="display: none;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        // メンバーデータ
+        let members = [
+            {"id": "A1", "name": "安田 賢司", "yomigana": "やすだ けんじ", "category": "生命保険（相続・事業承継）", "role": "☆プレジデント"},
+            {"id": "A2", "name": "石川 清太", "yomigana": "いしかわ しょうた", "category": "損害保険(建設業)", "role": "メンバー"},
+            {"id": "A3", "name": "亀山 一成", "yomigana": "かめやま かずなり", "category": "生命保険(財務キャッシュフロー改善)", "role": "メンバーシップサポート"},
+            {"id": "A44", "name": "伊藤 裕通", "yomigana": "いとう ひろみち", "category": "税理士（自計化による経営計画策定）", "role": "書記兼会計サポート"},
+            {"id": "A45", "name": "劔持 一雄", "yomigana": "けんもち かずお", "category": "税理士（創業・事業承継）", "role": "☆1to1委員長"},
+            {"id": "B130", "name": "佐藤 健太", "yomigana": "さとう けんた", "category": "社会保険労務士（人材定着支援）", "role": "メンバー"},
+            {"id": "B131", "name": "田中 美咲", "yomigana": "たなか みさき", "category": "社会保険労務士（働き方改革支援）", "role": "メンバー"}
+        ];
+
+        let memberData = {};
+        let currentMember = null;
+        let currentSearchType = 'basic';
+        let deleteMode = false;
+        let bulkDeleteMode = false;
+        let selectedMembers = new Set();
+
+        // 初期化
+        function init() {
+            console.log('初期化開始');
+            loadFromStorage();
+            setupEventListeners();
+            renderMemberList();
+            updateStats();
+            console.log('初期化完了');
+        }
+
+        // イベントリスナー設定
+        function setupEventListeners() {
+            console.log('イベントリスナー設定開始');
+
+            // 検索ボックス
+            document.getElementById('searchBox').addEventListener('input', filterMembers);
+
+            // 検索タブ
+            document.getElementById('basicSearch').addEventListener('click', () => setSearchType('basic'));
+            document.getElementById('wantsSearch').addEventListener('click', () => setSearchType('wants'));
+            document.getElementById('offersSearch').addEventListener('click', () => setSearchType('offers'));
+
+            // フィルターボタン
+            document.getElementById('filterAll').addEventListener('click', () => setFilter('all'));
+            document.getElementById('filterPending').addEventListener('click', () => setFilter('pending'));
+            document.getElementById('filterCompleted').addEventListener('click', () => setFilter('completed'));
+            document.getElementById('filterScheduled').addEventListener('click', () => setFilter('scheduled'));
+
+            // メンバー管理ボタン
+            document.getElementById('showAddBtn').addEventListener('click', showAddForm);
+            document.getElementById('showFileBtn').addEventListener('click', showFileUpload);
+            document.getElementById('showDeleteBtn').addEventListener('click', showDeleteMode);
+            document.getElementById('showBulkDeleteBtn').addEventListener('click', showBulkDeleteMode);
+            document.getElementById('saveNewMember').addEventListener('click', addNewMember);
+            document.getElementById('cancelAdd').addEventListener('click', hideAddForm);
+            document.getElementById('cancelFile').addEventListener('click', hideFileUpload);
+            document.getElementById('cancelDelete').addEventListener('click', hideDeleteMode);
+            document.getElementById('cancelBulkDelete').addEventListener('click', hideBulkDeleteMode);
+            document.getElementById('selectAllBtn').addEventListener('click', selectAllMembers);
+            document.getElementById('deselectAllBtn').addEventListener('click', deselectAllMembers);
+            document.getElementById('executeDelete').addEventListener('click', executeBulkDelete);
+
+            // ファイルアップロード
+            document.getElementById('fileArea').addEventListener('click', () => {
+                document.getElementById('fileInput').click();
+            });
+            document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+
+            // 保存ボタン
+            document.getElementById('saveBtn').addEventListener('click', saveMemberData);
+
+            // 戻るボタン
+            document.getElementById('backToList').addEventListener('click', backToMemberList);
+
+            // 現在のメンバー削除ボタン
+            document.getElementById('deleteCurrentMember').addEventListener('click', deleteCurrentMember);
+
+            // ステータス変更
+            document.getElementById('statusSelect').addEventListener('change', saveMemberData);
+
+            // エクスポートボタン
+            document.getElementById('exportExcel').addEventListener('click', exportToExcel);
+            document.getElementById('exportSchedule').addEventListener('click', exportSchedule);
+            document.getElementById('exportAllData').addEventListener('click', exportAllData);
+            document.getElementById('importAllData').addEventListener('click', () => {
+                document.getElementById('dataImportInput').click();
+            });
+            document.getElementById('dataImportInput').addEventListener('change', importAllData);
+
+            // フォームの変更を監視してリアルタイムマッチング
+            document.getElementById('businessDetail').addEventListener('input', updateMatching);
+            document.getElementById('idealClient').addEventListener('input', updateMatching);
+            document.getElementById('canIntroduce').addEventListener('input', updateMatching);
+
+            console.log('イベントリスナー設定完了');
+        }
+
+        // 削除モード表示
+        function showDeleteMode() {
+            deleteMode = true;
+            bulkDeleteMode = false;
+            hideAllForms();
+            document.getElementById('deleteForm').classList.add('show');
+            document.getElementById('memberList').classList.add('delete-mode');
+            document.getElementById('memberList').classList.remove('bulk-delete-mode');
+            renderMemberList();
+        }
+
+        // 削除モード非表示
+        function hideDeleteMode() {
+            deleteMode = false;
+            document.getElementById('deleteForm').classList.remove('show');
+            document.getElementById('memberList').classList.remove('delete-mode');
+            renderMemberList();
+        }
+
+        // 複数選択削除モード表示
+        function showBulkDeleteMode() {
+            bulkDeleteMode = true;
+            deleteMode = false;
+            selectedMembers.clear();
+            hideAllForms();
+            document.getElementById('bulkDeleteForm').classList.add('show');
+            document.getElementById('memberList').classList.add('bulk-delete-mode');
+            document.getElementById('memberList').classList.remove('delete-mode');
+            renderMemberList();
+            updateSelectedCount();
+        }
+
+        // 複数選択削除モード非表示
+        function hideBulkDeleteMode() {
+            bulkDeleteMode = false;
+            selectedMembers.clear();
+            document.getElementById('bulkDeleteForm').classList.remove('show');
+            document.getElementById('memberList').classList.remove('bulk-delete-mode');
+            renderMemberList();
+        }
+
+        // 全選択
+        function selectAllMembers() {
+            const visibleMembers = getVisibleMembers();
+            visibleMembers.forEach(member => selectedMembers.add(member.id));
+            renderMemberList();
+            updateSelectedCount();
+        }
+
+        // 全解除
+        function deselectAllMembers() {
+            selectedMembers.clear();
+            renderMemberList();
+            updateSelectedCount();
+        }
+
+        // 選択数更新
+        function updateSelectedCount() {
+            document.getElementById('selectedCount').textContent = selectedMembers.size;
+        }
+
+        // 表示中のメンバー取得
+        function getVisibleMembers() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const activeFilter = document.querySelector('.filter-btn.active').id.replace('filter', '').toLowerCase();
+            
+            return members.filter(member => {
+                // テキスト検索
+                let matchesSearch = true;
+                if (searchTerm) {
+                    if (currentSearchType === 'basic') {
+                        matchesSearch = member.name.toLowerCase().includes(searchTerm) ||
+                                      member.yomigana.toLowerCase().includes(searchTerm) ||
+                                      member.category.toLowerCase().includes(searchTerm) ||
+                                      member.id.toLowerCase().includes(searchTerm);
+                    } else if (currentSearchType === 'wants') {
+                        const data = memberData[member.id];
+                        matchesSearch = data && data.idealClient && data.idealClient.toLowerCase().includes(searchTerm);
+                    } else if (currentSearchType === 'offers') {
+                        const data = memberData[member.id];
+                        matchesSearch = data && data.canIntroduce && data.canIntroduce.toLowerCase().includes(searchTerm);
+                    }
+                }
+                
+                // ステータスフィルター
+                let matchesFilter = true;
+                if (activeFilter !== 'all') {
+                    const status = getMemberStatus(member.id);
+                    matchesFilter = status === activeFilter;
+                }
+                
+                return matchesSearch && matchesFilter;
+            });
+        }
+
+        // 一括削除実行
+        function executeBulkDelete() {
+            if (selectedMembers.size === 0) {
+                alert('削除するメンバーを選択してください。');
+                return;
+            }
+
+            const selectedMemberNames = Array.from(selectedMembers).map(id => 
+                members.find(m => m.id === id)?.name || id
+            ).join('、');
+
+            if (!confirm(`以下の${selectedMembers.size}人のメンバーを削除しますか？\n\n${selectedMemberNames}\n\n・メンバー情報\n・1to1の記録データ\n・添付画像\n\nすべてが完全に削除されます。`)) {
+                return;
+            }
+
+            // 選択されたメンバーを削除
+            const deletedCount = selectedMembers.size;
+            members = members.filter(m => !selectedMembers.has(m.id));
+            
+            // 1to1データも削除
+            selectedMembers.forEach(id => {
+                delete memberData[id];
+            });
+
+            // 現在選択中のメンバーが削除対象なら詳細画面をクリア
+            if (currentMember && selectedMembers.has(currentMember.id)) {
+                backToMemberList();
+            }
+
+            // 保存と画面更新
+            saveToStorage();
+            hideBulkDeleteMode();
+            renderMemberList();
+            updateStats();
+            
+            alert(`${deletedCount}人のメンバーを削除しました。`);
+        }
+
+        // メンバーの選択状態を切り替え
+        function toggleMemberSelection(memberId) {
+            if (selectedMembers.has(memberId)) {
+                selectedMembers.delete(memberId);
+            } else {
+                selectedMembers.add(memberId);
+            }
+            updateSelectedCount();
+        }
+
+        // メンバー削除（リストから）
+        function deleteMember(event, memberId) {
+            event.stopPropagation();
+            
+            const member = members.find(m => m.id === memberId);
+            if (!member) return;
+            
+            if (!confirm(`${member.name}さんを削除しますか？\n\n・メンバー情報\n・1to1の記録データ\n・添付画像\n\nすべてが完全に削除されます。`)) {
+                return;
+            }
+            
+            // メンバーデータから削除
+            members = members.filter(m => m.id !== memberId);
+            
+            // 1to1データも削除
+            delete memberData[memberId];
+            
+            // 現在選択中のメンバーなら詳細画面をクリア
+            if (currentMember && currentMember.id === memberId) {
+                backToMemberList();
+            }
+            
+            // 保存と画面更新
+            saveToStorage();
+            renderMemberList();
+            updateStats();
+            
+            alert(`${member.name}さんを削除しました。`);
+        }
+
+        // 現在のメンバー削除
+        function deleteCurrentMember() {
+            if (!currentMember) return;
+            
+            if (!confirm(`${currentMember.name}さんを削除しますか？\n\n・メンバー情報\n・1to1の記録データ\n・添付画像\n\nすべてが完全に削除されます。`)) {
+                return;
+            }
+            
+            // メンバーデータから削除
+            members = members.filter(m => m.id !== currentMember.id);
+            
+            // 1to1データも削除
+            delete memberData[currentMember.id];
+            
+            // 詳細画面をクリア
+            backToMemberList();
+            
+            // 保存と画面更新
+            saveToStorage();
+            renderMemberList();
+            updateStats();
+            
+            alert(`${currentMember.name}さんを削除しました。`);
+        }
+
+        // 検索タイプ設定
+        function setSearchType(type) {
+            currentSearchType = type;
+            document.querySelectorAll('.search-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(type + 'Search').classList.add('active');
+            
+            const placeholder = {
+                'basic': '🔍 メンバー検索...',
+                'wants': '🎯 紹介してほしい人・業種で検索...',
+                'offers': '🤝 紹介できる人・業種で検索...'
+            };
+            document.getElementById('searchBox').placeholder = placeholder[type];
+            filterMembers();
+        }
+
+        // フィルター設定
+        function setFilter(filter) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('filter' + filter.charAt(0).toUpperCase() + filter.slice(1)).classList.add('active');
+            filterMembers();
+        }
+
+        // メンバーフィルタリング
+        function filterMembers() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const activeFilter = document.querySelector('.filter-btn.active').id.replace('filter', '').toLowerCase();
+            
+            let filtered = members.filter(member => {
+                // テキスト検索
+                let matchesSearch = true;
+                if (searchTerm) {
+                    if (currentSearchType === 'basic') {
+                        matchesSearch = member.name.toLowerCase().includes(searchTerm) ||
+                                      member.yomigana.toLowerCase().includes(searchTerm) ||
+                                      member.category.toLowerCase().includes(searchTerm) ||
+                                      member.id.toLowerCase().includes(searchTerm);
+                    } else if (currentSearchType === 'wants') {
+                        const data = memberData[member.id];
+                        matchesSearch = data && data.idealClient && data.idealClient.toLowerCase().includes(searchTerm);
+                    } else if (currentSearchType === 'offers') {
+                        const data = memberData[member.id];
+                        matchesSearch = data && data.canIntroduce && data.canIntroduce.toLowerCase().includes(searchTerm);
+                    }
+                }
+                
+                // ステータスフィルター
+                let matchesFilter = true;
+                if (activeFilter !== 'all') {
+                    const status = getMemberStatus(member.id);
+                    matchesFilter = status === activeFilter;
+                }
+                
+                return matchesSearch && matchesFilter;
+            });
+            
+            renderMemberList(filtered);
+        }
+
+        // メンバーステータス取得
+        function getMemberStatus(memberId) {
+            const data = memberData[memberId];
+            return data ? (data.status || 'pending') : 'pending';
+        }
+
+        // メンバーリスト表示
+        function renderMemberList(filteredMembers = members) {
+            const listContainer = document.getElementById('memberList');
+            listContainer.innerHTML = '';
+
+            const actualFilteredMembers = filteredMembers.length === members.length ? getVisibleMembers() : filteredMembers;
+
+            actualFilteredMembers.forEach(member => {
+                const status = getMemberStatus(member.id);
+                const div = document.createElement('div');
+                div.className = `member-item ${status === 'completed' ? 'completed' : ''}`;
+                
+                if (!bulkDeleteMode) {
+                    div.onclick = () => selectMember(member);
+                }
+                
+                const isSelected = selectedMembers.has(member.id);
+                
+                div.innerHTML = `
+                    <input type="checkbox" class="member-checkbox" ${isSelected ? 'checked' : ''} 
+                           onchange="toggleMemberSelection('${member.id}'); event.stopPropagation();">
+                    <div class="member-info">
+                        <div class="member-name">${member.name}</div>
+                        <div class="member-category">${member.category}</div>
+                        <div class="member-id">${member.id} - ${member.role}</div>
+                    </div>
+                    <div class="member-actions">
+                        <div class="status-indicator ${status}"></div>
+                        <button class="delete-member-btn" onclick="deleteMember(event, '${member.id}')" title="メンバーを削除">🗑️</button>
+                    </div>
+                `;
+                
+                listContainer.appendChild(div);
+            });
+        }
+
+        // メンバー選択
+        function selectMember(member) {
+            currentMember = member;
+            
+            // 選択状態更新
+            document.querySelectorAll('.member-item').forEach(item => item.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            // 詳細パネル表示
+            document.getElementById('welcomeMessage').style.display = 'none';
+            document.getElementById('memberDetail').classList.add('active');
+            
+            // メンバー情報表示
+            document.getElementById('detailName').textContent = member.name;
+            document.getElementById('detailCategory').textContent = `${member.id} - ${member.category}`;
+            
+            // 保存データ読み込み
+            loadMemberData(member.id);
+            
+            // マッチング更新
+            updateMatching();
+        }
+
+        // メンバーデータ読み込み
+        function loadMemberData(memberId) {
+            const data = memberData[memberId] || {};
+            
+            document.getElementById('meetingDate').value = data.meetingDate || '';
+            document.getElementById('statusSelect').value = data.status || 'pending';
+            document.getElementById('location').value = data.location || '';
+            document.getElementById('businessDetail').value = data.businessDetail || '';
+            document.getElementById('idealClient').value = data.idealClient || '';
+            document.getElementById('canIntroduce').value = data.canIntroduce || '';
+            document.getElementById('nextActions').value = data.nextActions || '';
+            document.getElementById('followupDate').value = data.followupDate || '';
+            document.getElementById('priority').value = data.priority || 'normal';
+            document.getElementById('freeNote').value = data.freeNote || '';
+            
+            // 画像データの読み込み
+            loadImages(data.images || {});
+        }
+
+        // マッチング更新
+        function updateMatching() {
+            if (!currentMember) return;
+
+            const currentData = {
+                businessDetail: document.getElementById('businessDetail').value,
+                idealClient: document.getElementById('idealClient').value,
+                canIntroduce: document.getElementById('canIntroduce').value
+            };
+
+            const matches = findMatches(currentMember.id, currentData);
+            renderMatching(matches);
+        }
+
+        // マッチング検索
+        function findMatches(currentMemberId, currentData) {
+            const matches = [];
+
+            members.forEach(member => {
+                if (member.id === currentMemberId) return; // 自分自身は除外
+
+                const memberData_local = memberData[member.id] || {};
+                const matchReasons = [];
+                let totalScore = 0;
+
+                // 1. 現在のメンバーの「理想的な紹介先」と他メンバーの「事業内容」をマッチング
+                if (currentData.idealClient && memberData_local.businessDetail) {
+                    const score = calculateTextMatch(currentData.idealClient, memberData_local.businessDetail);
+                    if (score > 0) {
+                        matchReasons.push({
+                            type: 'wants',
+                            score: score,
+                            text: `${currentMember.name}が求める人材 ⇄ ${member.name}の事業内容`,
+                            keywords: extractMatchingKeywords(currentData.idealClient, memberData_local.businessDetail)
+                        });
+                        totalScore += score;
+                    }
+                }
+
+                // 2. 現在のメンバーの「紹介できること」と他メンバーの「理想的な紹介先」をマッチング
+                if (currentData.canIntroduce && memberData_local.idealClient) {
+                    const score = calculateTextMatch(currentData.canIntroduce, memberData_local.idealClient);
+                    if (score > 0) {
+                        matchReasons.push({
+                            type: 'offers',
+                            score: score,
+                            text: `${currentMember.name}が紹介できる ⇄ ${member.name}が求める人材`,
+                            keywords: extractMatchingKeywords(currentData.canIntroduce, memberData_local.idealClient)
+                        });
+                        totalScore += score;
+                    }
+                }
+
+                // 3. 現在のメンバーの「事業内容」と他メンバーの「理想的な紹介先」をマッチング
+                if (currentData.businessDetail && memberData_local.idealClient) {
+                    const score = calculateTextMatch(currentData.businessDetail, memberData_local.idealClient);
+                    if (score > 0) {
+                        matchReasons.push({
+                            type: 'business',
+                            score: score,
+                            text: `${currentMember.name}の事業内容 ⇄ ${member.name}が求める人材`,
+                            keywords: extractMatchingKeywords(currentData.businessDetail, memberData_local.idealClient)
+                        });
+                        totalScore += score;
+                    }
+                }
+
+                if (matchReasons.length > 0) {
+                    matches.push({
+                        member: member,
+                        reasons: matchReasons,
+                        totalScore: totalScore,
+                        level: totalScore >= 3 ? 'high' : totalScore >= 2 ? 'medium' : 'low'
+                    });
+                }
+            });
+
+            // スコア順にソート
+            return matches.sort((a, b) => b.totalScore - a.totalScore);
+        }
+
+        // テキストマッチング計算
+        function calculateTextMatch(text1, text2) {
+            if (!text1 || !text2) return 0;
+
+            const keywords1 = extractKeywords(text1);
+            const keywords2 = extractKeywords(text2);
+            
+            let matchCount = 0;
+            let totalKeywords = Math.max(keywords1.length, keywords2.length);
+
+            keywords1.forEach(keyword => {
+                if (keywords2.some(k => k.includes(keyword) || keyword.includes(k))) {
+                    matchCount++;
+                }
+            });
+
+            // スコア計算（0-5の範囲）
+            return Math.min(5, Math.round((matchCount / Math.max(1, totalKeywords * 0.3)) * 3));
+        }
+
+        // キーワード抽出
+        function extractKeywords(text) {
+            if (!text) return [];
+            
+            // 一般的な除外語
+            const stopWords = ['の', 'を', 'に', 'は', 'が', 'で', 'と', 'も', 'から', 'まで', 'として', 'について', 'による', 'など', 'または', 'および', 'また', 'さらに', 'しかし', 'ただし', 'ため', 'こと', 'もの', 'ある', 'いる', 'する', 'される', 'できる', 'れる', 'らしい'];
+            
+            return text
+                .replace(/[、。！？\s\n\r]/g, ' ')
+                .split(' ')
+                .map(word => word.trim())
+                .filter(word => word.length >= 2 && !stopWords.includes(word))
+                .filter(word => /[ぁ-んァ-ヶ一-龠a-zA-Z0-9]/.test(word));
+        }
+
+        // マッチングキーワード抽出
+        function extractMatchingKeywords(text1, text2) {
+            const keywords1 = extractKeywords(text1);
+            const keywords2 = extractKeywords(text2);
+            const matching = [];
+
+            keywords1.forEach(k1 => {
+                keywords2.forEach(k2 => {
+                    if (k1.includes(k2) || k2.includes(k1)) {
+                        if (!matching.includes(k1)) matching.push(k1);
+                        if (!matching.includes(k2)) matching.push(k2);
+                    }
+                });
+            });
+
+            return matching.slice(0, 5); // 最大5個
+        }
+
+        // マッチング結果表示
+        function renderMatching(matches) {
+            const container = document.getElementById('matchingResults');
+            
+            if (matches.length === 0) {
+                container.innerHTML = '<div class="no-matches">現在のところマッチする候補はありません</div>';
+                return;
+            }
+
+            const html = matches.map(match => {
+                const scoreText = match.level === 'high' ? '高' : match.level === 'medium' ? '中' : '低';
+                const reasonsHtml = match.reasons.map(reason => {
+                    const keywordsHtml = reason.keywords.map(kw => 
+                        `<span class="matching-keyword highlight">${kw}</span>`
+                    ).join('');
+                    
+                    const typeIcon = reason.type === 'wants' ? '🎯' : reason.type === 'offers' ? '🤝' : '💼';
+                    
+                    return `
+                        <div class="matching-reason ${reason.type}">
+                            ${typeIcon} ${reason.text}
+                            <div class="matching-keywords">${keywordsHtml}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="matching-card ${match.level}-match" onclick="selectMemberById('${match.member.id}')">
+                        <div class="matching-header">
+                            <div class="matching-name">${match.member.name}</div>
+                            <div class="matching-score ${match.level}">マッチ度: ${scoreText}</div>
+                        </div>
+                        <div class="matching-category">${match.member.category}</div>
+                        ${reasonsHtml}
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `<div class="matching-results">${html}</div>`;
+        }
+
+        // IDでメンバー選択
+        function selectMemberById(memberId) {
+            const member = members.find(m => m.id === memberId);
+            if (member) {
+                selectMember(member);
+                // スクロールしてメンバーリストの選択を見えるようにする
+                const memberElement = document.querySelector(`.member-item[onclick*="${memberId}"]`);
+                if (memberElement) {
+                    memberElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }
+
+        // メンバーリストに戻る
+        function backToMemberList() {
+            // 現在の選択をクリア
+            currentMember = null;
+            
+            // 左側の選択状態をクリア
+            document.querySelectorAll('.member-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // 右側をウェルカム画面に戻す
+            document.getElementById('memberDetail').classList.remove('active');
+            document.getElementById('welcomeMessage').style.display = 'block';
+            
+            // フォームをリセット
+            resetMemberForm();
+        }
+
+        // メンバーフォームリセット
+        function resetMemberForm() {
+            document.getElementById('meetingDate').value = '';
+            document.getElementById('statusSelect').value = 'pending';
+            document.getElementById('location').value = '';
+            document.getElementById('businessDetail').value = '';
+            document.getElementById('idealClient').value = '';
+            document.getElementById('canIntroduce').value = '';
+            document.getElementById('nextActions').value = '';
+            document.getElementById('followupDate').value = '';
+            document.getElementById('priority').value = 'normal';
+            document.getElementById('freeNote').value = '';
+            
+            // 画像もリセット
+            loadImages({});
+        }
+
+        // 画像データ読み込み
+        function loadImages(images) {
+            for (let i = 1; i <= 2; i++) {
+                const imageData = images[`image${i}`];
+                const preview = document.getElementById(`image${i}Preview`);
+                const placeholder = document.querySelector(`#imageSlot${i} .image-placeholder`);
+                const controls = document.getElementById(`image${i}Controls`);
+                
+                if (imageData) {
+                    preview.src = imageData;
+                    preview.style.display = 'block';
+                    placeholder.style.display = 'none';
+                    controls.style.display = 'flex';
+                } else {
+                    preview.style.display = 'none';
+                    placeholder.style.display = 'flex';
+                    controls.style.display = 'none';
+                }
+            }
+        }
+
+        // 画像選択
+        function selectImage(slot) {
+            document.getElementById(`imageInput${slot}`).click();
+        }
+
+        // 画像アップロード処理
+        function handleImageUpload(slot, event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // ファイルサイズチェック（5MB）
+            if (file.size > 5 * 1024 * 1024) {
+                alert('ファイルサイズが大きすぎます。5MB以下のファイルを選択してください。');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+                
+                // プレビュー表示
+                const preview = document.getElementById(`image${slot}Preview`);
+                const placeholder = document.querySelector(`#imageSlot${slot} .image-placeholder`);
+                const controls = document.getElementById(`image${slot}Controls`);
+                
+                preview.src = imageData;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+                controls.style.display = 'flex';
+                
+                // 自動保存
+                if (currentMember) {
+                    saveMemberData();
+                }
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        // 画像削除
+        function removeImage(slot) {
+            if (!confirm('この画像を削除しますか？')) return;
+            
+            const preview = document.getElementById(`image${slot}Preview`);
+            const placeholder = document.querySelector(`#imageSlot${slot} .image-placeholder`);
+            const controls = document.getElementById(`image${slot}Controls`);
+            const input = document.getElementById(`imageInput${slot}`);
+            
+            preview.style.display = 'none';
+            placeholder.style.display = 'flex';
+            controls.style.display = 'none';
+            input.value = '';
+            
+            // 自動保存
+            if (currentMember) {
+                saveMemberData();
+            }
+        }
+
+        // 画像拡大表示
+        function viewImage(slot) {
+            const preview = document.getElementById(`image${slot}Preview`);
+            if (!preview.src) return;
+            
+            // モーダル作成
+            const modal = document.createElement('div');
+            modal.className = 'image-modal';
+            modal.onclick = () => modal.remove();
+            
+            const img = document.createElement('img');
+            img.src = preview.src;
+            
+            const closeBtn = document.createElement('div');
+            closeBtn.className = 'close-modal';
+            closeBtn.innerHTML = '×';
+            closeBtn.onclick = () => modal.remove();
+            
+            modal.appendChild(img);
+            modal.appendChild(closeBtn);
+            document.body.appendChild(modal);
+        }
+
+        // メンバーデータ保存
+        function saveMemberData() {
+            if (!currentMember) return;
+            
+            // 画像データを取得
+            const images = {};
+            for (let i = 1; i <= 2; i++) {
+                const preview = document.getElementById(`image${i}Preview`);
+                if (preview.style.display === 'block' && preview.src) {
+                    images[`image${i}`] = preview.src;
+                }
+            }
+            
+            const data = {
+                meetingDate: document.getElementById('meetingDate').value,
+                status: document.getElementById('statusSelect').value,
+                location: document.getElementById('location').value,
+                businessDetail: document.getElementById('businessDetail').value,
+                idealClient: document.getElementById('idealClient').value,
+                canIntroduce: document.getElementById('canIntroduce').value,
+                nextActions: document.getElementById('nextActions').value,
+                followupDate: document.getElementById('followupDate').value,
+                priority: document.getElementById('priority').value,
+                freeNote: document.getElementById('freeNote').value,
+                images: images,
+                lastUpdated: new Date().toISOString()
+            };
+            
+            memberData[currentMember.id] = data;
+            saveToStorage();
+            updateStats();
+            renderMemberList();
+            
+            // 保存フィードバック
+            const saveBtn = document.getElementById('saveBtn');
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = '✅ 保存完了!';
+            setTimeout(() => {
+                saveBtn.textContent = originalText;
+            }, 2000);
+        }
+
+        // 場所設定
+        function setLocation(location) {
+            document.getElementById('location').value = location;
+        }
+
+        // 統計更新
+        function updateStats() {
+            const total = members.length;
+            const completed = Object.values(memberData).filter(data => data.status === 'completed').length;
+            const scheduled = Object.values(memberData).filter(data => data.status === 'scheduled').length;
+            const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+            
+            document.getElementById('totalMembers').textContent = total;
+            document.getElementById('completedCount').textContent = completed;
+            document.getElementById('scheduledCount').textContent = scheduled;
+            document.getElementById('progressPercent').textContent = progress + '%';
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // 新規追加フォーム表示
+        function showAddForm() {
+            hideAllForms();
+            document.getElementById('addForm').classList.add('show');
+        }
+
+        // 新規追加フォーム非表示
+        function hideAddForm() {
+            document.getElementById('addForm').classList.remove('show');
+            clearAddForm();
+        }
+
+        // ファイルアップロード表示
+        function showFileUpload() {
+            hideAllForms();
+            document.getElementById('fileUpload').classList.add('show');
+        }
+
+        // ファイルアップロード非表示
+        function hideFileUpload() {
+            document.getElementById('fileUpload').classList.remove('show');
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileStatus').innerHTML = '';
+        }
+
+        // 全フォーム非表示
+        function hideAllForms() {
+            document.getElementById('addForm').classList.remove('show');
+            document.getElementById('fileUpload').classList.remove('show');
+            document.getElementById('deleteForm').classList.remove('show');
+            document.getElementById('bulkDeleteForm').classList.remove('show');
+            hideDeleteMode();
+            hideBulkDeleteMode();
+        }
+
+        // 新規メンバー追加
+        function addNewMember() {
+            const id = document.getElementById('newId').value.trim();
+            const name = document.getElementById('newName').value.trim();
+            const yomigana = document.getElementById('newYomigana').value.trim();
+            const category = document.getElementById('newCategory').value.trim();
+            const role = document.getElementById('newRole').value.trim() || 'メンバー';
+
+            if (!id || !name || !yomigana || !category) {
+                alert('ID、名前、よみがな、カテゴリーは必須です。');
+                return;
+            }
+
+            if (members.find(m => m.id === id)) {
+                alert('このIDは既に使用されています。');
+                return;
+            }
+
+            members.push({ id, name, yomigana, category, role });
+            saveToStorage();
+            renderMemberList();
+            updateStats();
+            hideAddForm();
+            alert('メンバーを追加しました！');
+        }
+
+        // 追加フォームクリア
+        function clearAddForm() {
+            document.getElementById('newId').value = '';
+            document.getElementById('newName').value = '';
+            document.getElementById('newYomigana').value = '';
+            document.getElementById('newCategory').value = '';
+            document.getElementById('newRole').value = 'メンバー';
+        }
+
+        // ファイルアップロード処理
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const fileStatus = document.getElementById('fileStatus');
+            fileStatus.textContent = '処理中...';
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    let data;
+                    if (file.name.endsWith('.xlsx')) {
+                        const workbook = XLSX.read(e.target.result, { type: 'array' });
+                        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                        data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                    } else if (file.name.endsWith('.csv')) {
+                        const text = new TextDecoder().decode(new Uint8Array(e.target.result));
+                        data = text.split('\n').map(row => {
+                            const cells = [];
+                            let currentCell = '';
+                            let inQuotes = false;
+                            
+                            for (let i = 0; i < row.length; i++) {
+                                const char = row[i];
+                                if (char === '"') {
+                                    inQuotes = !inQuotes;
+                                } else if (char === ',' && !inQuotes) {
+                                    cells.push(currentCell.trim().replace(/^"|"$/g, ''));
+                                    currentCell = '';
+                                } else {
+                                    currentCell += char;
+                                }
+                            }
+                            cells.push(currentCell.trim().replace(/^"|"$/g, ''));
+                            return cells;
+                        }).filter(row => row.some(cell => cell.length > 0));
+                    }
+                    
+                    processImportData(data);
+                } catch (error) {
+                    fileStatus.textContent = 'エラー: ' + error.message;
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // インポートデータ処理
+        function processImportData(data) {
+            const fileStatus = document.getElementById('fileStatus');
+            
+            if (!data || data.length === 0) {
+                fileStatus.textContent = 'データが見つかりません';
+                return;
+            }
+
+            let added = 0;
+            let skipped = 0;
+            let errors = 0;
+            
+            const firstRow = data[0];
+            let nameCol = -1, yomiganaCol = -1, categoryCol = -1, roleCol = -1, idCol = -1;
+            
+            if (firstRow) {
+                for (let i = 0; i < firstRow.length; i++) {
+                    const header = String(firstRow[i] || '').toLowerCase();
+                    if (header.includes('名前') || header.includes('name')) nameCol = i;
+                    else if (header.includes('よみがな') || header.includes('yomigana') || header.includes('読み')) yomiganaCol = i;
+                    else if (header.includes('カテゴリー') || header.includes('category') || header.includes('業種')) categoryCol = i;
+                    else if (header.includes('役職') || header.includes('role') || header.includes('職')) roleCol = i;
+                    else if (header.includes('id') || header === 'id') idCol = i;
+                }
+            }
+            
+            const hasHeader = nameCol >= 0 || yomiganaCol >= 0 || categoryCol >= 0;
+            const startRow = hasHeader ? 1 : 0;
+            
+            if (nameCol === -1) nameCol = 0;
+            if (yomiganaCol === -1) yomiganaCol = 2;
+            if (categoryCol === -1) categoryCol = 3;
+            if (roleCol === -1) roleCol = 6;
+            
+            for (let i = startRow; i < data.length; i++) {
+                const row = data[i];
+                
+                if (!row || row.length === 0) continue;
+                
+                const name = String(row[nameCol] || '').trim();
+                const yomigana = String(row[yomiganaCol] || '').trim();
+                const category = String(row[categoryCol] || '').trim();
+                const role = String(row[roleCol] || 'メンバー').trim();
+                
+                let id;
+                if (idCol >= 0 && row[idCol]) {
+                    id = String(row[idCol]).trim();
+                } else {
+                    const firstChar = name ? name.charAt(0) : 'M';
+                    id = `${firstChar}${i}`;
+                }
+                
+                if (!name || !category) {
+                    errors++;
+                    continue;
+                }
+                
+                if (members.find(m => m.name === name)) {
+                    skipped++;
+                    continue;
+                }
+                
+                if (members.find(m => m.id === id)) {
+                    let counter = 1;
+                    let newId = `${id}_${counter}`;
+                    while (members.find(m => m.id === newId)) {
+                        counter++;
+                        newId = `${id}_${counter}`;
+                    }
+                    id = newId;
+                }
+                
+                const finalYomigana = yomigana || `${name.replace(/\s+/g, '')} dummy`;
+                
+                const newMember = { id, name, yomigana: finalYomigana, category, role };
+                members.push(newMember);
+                added++;
+            }
+            
+            saveToStorage();
+            renderMemberList();
+            updateStats();
+            
+            let statusMessage = `完了: ${added}件追加`;
+            if (skipped > 0) statusMessage += `, ${skipped}件重複スキップ`;
+            if (errors > 0) statusMessage += `, ${errors}件エラー`;
+            
+            fileStatus.textContent = statusMessage;
+            fileStatus.style.color = added > 0 ? 'green' : 'red';
+            
+            if (added > 0) {
+                setTimeout(() => {
+                    document.getElementById('fileInput').value = '';
+                    hideFileUpload();
+                }, 3000);
+            }
+        }
+
+        // 全データエクスポート
+        function exportAllData() {
+            const allData = {
+                members: members,
+                memberData: memberData,
+                exportDate: new Date().toISOString(),
+                version: "1.0"
+            };
+            
+            const dataStr = JSON.stringify(allData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `BNI_全データ_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('全データを出力しました！\n他のPCでこのファイルを取り込むことでデータを同期できます。');
+        }
+
+        // 全データインポート
+        function importAllData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!confirm('全データを取り込みます。\n現在のデータは上書きされますが、よろしいですか？\n\n※事前にバックアップを取ることをお勧めします。')) {
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    if (!importedData.members || !importedData.memberData) {
+                        throw new Error('無効なデータ形式です');
+                    }
+                    
+                    members = importedData.members;
+                    memberData = importedData.memberData;
+                    
+                    saveToStorage();
+                    renderMemberList();
+                    updateStats();
+                    
+                    currentMember = null;
+                    document.getElementById('welcomeMessage').style.display = 'block';
+                    document.getElementById('memberDetail').classList.remove('active');
+                    
+                    alert(`データ取込完了！\n\nメンバー数: ${members.length}人\n1to1記録: ${Object.keys(memberData).length}件\n\n画面が更新されました。`);
+                    
+                } catch (error) {
+                    alert('データの取り込みに失敗しました: ' + error.message);
+                }
+                
+                event.target.value = '';
+            };
+            
+            reader.readAsText(file);
+        }
+
+        // Excel出力
+        function exportToExcel() {
+            const data = [['ID', '名前', 'よみがな', 'カテゴリー', '役職', 'ステータス', '実施日', '場所', '事業内容', '理想的な紹介先', '紹介できること', '次のアクション', 'フォローアップ日', '優先度', 'メモ']];
+            
+            members.forEach(member => {
+                const memberInfo = memberData[member.id] || {};
+                data.push([
+                    member.id, member.name, member.yomigana, member.category, member.role,
+                    memberInfo.status || '未実施', memberInfo.meetingDate || '', memberInfo.location || '',
+                    memberInfo.businessDetail || '', memberInfo.idealClient || '', memberInfo.canIntroduce || '',
+                    memberInfo.nextActions || '', memberInfo.followupDate || '', memberInfo.priority || '通常',
+                    memberInfo.freeNote || ''
+                ]);
+            });
+            
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, '1to1記録');
+            XLSX.writeFile(wb, `BNI_1to1記録_${new Date().toISOString().split('T')[0]}.xlsx`);
+        }
+
+        // 予定リスト出力
+        function exportSchedule() {
+            const scheduled = members.filter(member => {
+                const data = memberData[member.id];
+                return data && (data.status === 'scheduled' || data.followupDate);
+            });
+            
+            const data = [['日付', 'メンバー', 'カテゴリー', 'タイプ', '場所', 'アクション']];
+            
+            scheduled.forEach(member => {
+                const info = memberData[member.id];
+                if (info.status === 'scheduled' && info.meetingDate) {
+                    data.push([info.meetingDate, member.name, member.category, '1to1', info.location || '', info.nextActions || '']);
+                }
+                if (info.followupDate) {
+                    data.push([info.followupDate, member.name, member.category, 'フォローアップ', '', info.nextActions || '']);
+                }
+            });
+            
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, '予定リスト');
+            XLSX.writeFile(wb, `BNI_予定リスト_${new Date().toISOString().split('T')[0]}.xlsx`);
+        }
+
+        // ストレージ保存
+        function saveToStorage() {
+            localStorage.setItem('bni_members', JSON.stringify(members));
+            localStorage.setItem('bni_member_data', JSON.stringify(memberData));
+        }
+
+        // ストレージ読み込み
+        function loadFromStorage() {
+            const savedMembers = localStorage.getItem('bni_members');
+            const savedData = localStorage.getItem('bni_member_data');
+            
+            if (savedMembers) {
+                members = JSON.parse(savedMembers);
+            }
+            if (savedData) {
+                memberData = JSON.parse(savedData);
+            }
+        }
+
+        // ページ読み込み時に初期化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
